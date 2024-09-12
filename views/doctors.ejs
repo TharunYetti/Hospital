@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctors</title>
+</head>
+<body>
+    <table>
+        <thead>
+            <tr>
+              <th>doctorName</th>
+              <th>hospitalName</th>
+              <th>specialization</th>
+              <th>date</th>
+              <th>morning</th>
+              <th>afternoon</th>
+            </tr>
+        </thead>
+        <% doctorsList.forEach(function(doctor){ %>
+        <tr>
+            <td><%= doctor.doctorName %></td>
+            <td><%= doctor.hospitalName %></td>
+            <td><%= doctor.specialization %></td>
+            <td><%= doctor.date %></td>
+            <td>
+                <% if(doctor.morning<15){ %>
+                    <form action="/bookAppointmentM" method="POST">
+                        <input type="hidden" name="doctorId" value="<%= doctor._id %>">
+                        <button type="submit">Morning</button>
+                    </form>
+                <% }else{ %>
+                    N/A
+                <% } %>
+            </td>
+            <td>
+                <% if(doctor.afternoon<15){ %>
+                    <form action="/bookAppointmentA" method="POST">
+                        <input type="hidden" name="doctorId" value="<%= doctor._id %>">
+                        <button type="submit">Afternoon</button>
+                    </form>
+                <% }else{ %>
+                    N/A
+                <% } %>
+            </td>
+        </tr>
+        <% }); %>
+    </table>
+</body>
+</html>

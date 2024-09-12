@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BedsPage</title>
+</head>
+<body>
+    <h1>Available Beds</h1>
+    <table>
+        <thead>
+            <th>HospitalName</th>
+            <th>Ward Number</th>
+            <th>Total Beds</th>
+            <th>Available Beds</th>
+            <th>Any Change?</th>
+        </thead>
+        <% collection.forEach(function(ward,index){ %>
+        <tr>
+            <td><%= ward.hospital %></td>
+            <td><%= ward.ward %></td>
+            <td><%= ward.totalBeds %></td>
+            <td><%= ward.availableBeds %></td>
+            <!-- Use a unique ID for each input field -->
+            <td><input type="text" id="bedsNew_<%= index %>" value="<%= ward.availableBeds %>" required></td>
+            <td>
+            <button
+            onclick="UpdateBedsDetails('<%= ward.hospital %>','<%= ward.ward %>','<%= index %>')">Modify
+            </button>
+            </td>
+        </tr>
+        <% }); %>
+        <tr>
+            <td><h3>Add New</h3></td>
+        </tr>
+        <tr>
+            <td><input type="text" id="newHospital" required></td>
+            <td><input type="text" id="newWard" required></td>
+            <td><input type="text" id="newTotalBeds" required></td>
+            <td><input type="text" id="newAvailableBeds" required></td>
+            <td><button onclick="AddTheDetails()">Add</button></td>
+        </tr>
+    </table>
+    <script>
+        function AddTheDetails(){
+            const v1 = document.getElementById("newHospital").value;
+            const v2 = document.getElementById("newWard").value;
+            const v3 = document.getElementById("newTotalBeds").value;
+            const v4 = document.getElementById("newAvailableBeds").value;
+
+            // Sending POST request using fetch
+            fetch('/bedsBook', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    hospitalName: v1,
+                    ward: v2,
+                    totalBeds: v3,
+                    availableBeds: v4
+                })
+            })
+            .then(response => response.json()) // Handle the response as JSON
+            .then(result => {
+                if (result.success) {
+                    alert('Details added successfully');
+                    window.location.reload();
+                    //window.location.href = window.location.href;
+                } else {
+                    alert('Error: ' + result.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });}    
+
+    function UpdateBedsDetails(hospital,ward,index) {
+        const availableBeds = document.getElementById(`bedsNew_${index}`).value;
+        console.log("V3:",availableBeds);
+        // Sending POST request using fetch
+        fetch('/updateBeds', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                hospitalName: hospital,
+                ward: ward,
+                availableBeds: availableBeds
+            })
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.success) {
+                alert('Beds updated successfully');
+                window.location.reload();  // Refresh the page after successful update
+            } else {
+                alert('Error: ' + result.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+
+    </script>
+</body>
+</html>
